@@ -1,0 +1,8 @@
+*.pyc
+db.sqlite3
+.env
+/env
+client_secret.json
+/Backend/core/migrations
+__pycache__/
+.DS_Store
