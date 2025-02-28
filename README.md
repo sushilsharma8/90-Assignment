@@ -9,7 +9,7 @@ This project implements Google OAuth authentication and Google Drive file manage
 - 📜 List uploaded files from Google Drive
 - 🔄 Token refresh mechanism
 - 📝 Logging for debugging
-- 🚀 Deployment ready for **Render, Railway, or any cloud platform**
+- 🚀 Deployment ready for **Render or any cloud platform**
 
 ## Tech Stack
 
@@ -87,10 +87,6 @@ daphne -b 0.0.0.0 -p 8000 Backend.asgi:application
 - `POST /api/drive/upload/` - Uploads a file to Google Drive (Header: `User-Email` required)
 - `GET /api/drive/files/` - Lists user’s uploaded files (Header: `User-Email` required)
 
-### 🔄 Token Management
-
-- `POST /api/auth/refresh/` - Refreshes access token
-
 ### ⚡ Health Check & Root Page
 
 - `GET /` - Shows ASCII welcome message
@@ -103,7 +99,7 @@ daphne -b 0.0.0.0 -p 8000 Backend.asgi:application
 3. **Set Environment Variables** (Use `.env` values)
 4. **Use this start command**:
    ```bash
-   cd Backend && python manage.py migrate && daphne -b 0.0.0.0 -p 8000 Backend.asgi:application
+   python manage.py migrate && daphne -b 0.0.0.0 -p 8000 Backend.asgi:application
    ```
 
 Project is live at [nine0-assignment.onrender.com](https://nine0-assignment.onrender.com) 🎉
