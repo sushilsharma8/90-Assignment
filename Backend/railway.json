@@ -1,18 +1,15 @@
 {
+    "$schema": "https://railway.com/railway.schema.json",
     "build": {
-      "env": {
-        "PYTHON_VERSION": "3.11",
-        "PIPENV_VENV_IN_PROJECT": "1"
-      },
-      "commands": [
-        "pip install -r requirements.txt",
-        "python manage.py collectstatic --noinput"
-      ]
+      "builder": "nixpacks",
+      "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput"
     },
     "deploy": {
+      "preDeployCommand": ["python manage.py migrate"],
       "startCommand": "daphne -b 0.0.0.0 -p $PORT Backend.asgi:application",
       "healthcheckPath": "/",
-      "healthcheckTimeout": 30
+      "healthcheckTimeout": 30,
+      "restartPolicyType": "always"
     },
     "services": [
       {
