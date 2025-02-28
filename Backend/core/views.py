@@ -219,6 +219,9 @@ def health_check(request):
 
 def cool_terminal(request):
     ascii_banner = art.text2art("I left this for the frontend dev!", font="block")
-    message = "My work here is done. Time for the frontend dev to take over! 😎🎨"
-    return HttpResponse(f"<pre>{ascii_banner}</pre><p>{message}</p>", content_type="text/html")
-
+    message = "My work here is done. Time for the frontend dev to take over!"
+    
+    return HttpResponse(
+        f"<pre style='font-family: monospace;'>{ascii_banner}</pre><p>{message}</p>", 
+        content_type="text/html"
+    )
