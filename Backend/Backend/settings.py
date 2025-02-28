@@ -26,6 +26,12 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 ALLOWED_HOSTS = ['*']
 
+CORS_ALLOWED_ORIGINS = [
+    "https://nine0-assignment.onrender.com",
+    "http://localhost:8000",
+]
+
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
