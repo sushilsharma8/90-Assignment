@@ -1,19 +1,30 @@
 {
-    "$schema": "https://railway.com/railway.schema.json",
     "build": {
-      "builder": "NIXPACKS"
+      "env": {
+        "PYTHON_VERSION": "3.11",
+        "PIPENV_VENV_IN_PROJECT": "1"
+      },
+      "commands": [
+        "pip install -r requirements.txt",
+        "python manage.py collectstatic --noinput"
+      ]
     },
     "deploy": {
-      "runtime": "V2",
-      "numReplicas": 1,
-      "startCommand": "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn mysite.wsgi",
-      "sleepApplication": false,
-      "multiRegionConfig": {
-        "us-west1": {
-          "numReplicas": 1
+      "startCommand": "daphne -b 0.0.0.0 -p $PORT Backend.asgi:application",
+      "healthcheckPath": "/",
+      "healthcheckTimeout": 30
+    },
+    "services": [
+      {
+        "name": "web",
+        "env": {
+          "DJANGO_SECRET_KEY": "your-secret-key",
+          "DEBUG": "True",
+          "GOOGLE_CLIENT_ID": "107137969640-gocspx4lqw5e2oyo8f9rzrn0w1kafqopkks.apps.googleusercontent.com",
+          "GOOGLE_CLIENT_SECRET": "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",
+          "DATABASE_URL": "postgresql://neondb_owner:npg_ti1noq8hbWON@ep-still-base-a8by9ndy-pooler.eastus2.azure.neon.tech/neondb?sslmode=require"
         }
-      },
-      "restartPolicyType": "ON_FAILURE",
-      "restartPolicyMaxRetries": 10
-    }
+      }
+    ]
   }
+  
