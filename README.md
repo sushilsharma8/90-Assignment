@@ -23,7 +23,7 @@ This project implements Google OAuth authentication and Google Drive file manage
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/sushilsharma8/google-drive-django.git
+git clone https://github.com/sushilsharma8/90-Assignment.git
 cd google-drive-django
 ```
 
