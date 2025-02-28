@@ -16,7 +16,7 @@
           "commands": [
             "python -m ensurepip --upgrade",
             "python -m pip install --upgrade pip setuptools wheel",
-            "export PATH=$PATH:~/.nix-profile/bin"  # Critical fix
+            "export PATH=$PATH:~/.nix-profile/bin" 
           ]
         },
         "build": {
