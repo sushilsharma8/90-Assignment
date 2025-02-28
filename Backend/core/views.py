@@ -218,5 +218,7 @@ def health_check(request):
     return JsonResponse({"status": "ok"})
 
 def cool_terminal(request):
-    ascii_banner = art.text2art("Welcome Here!", font="block")
-    return HttpResponse(f"<pre>{ascii_banner}</pre>", content_type="text/html")
+    ascii_banner = art.text2art("I left this for the frontend dev!", font="block")
+    message = "My work here is done. Time for the frontend dev to take over! 😎🎨"
+    return HttpResponse(f"<pre>{ascii_banner}</pre><p>{message}</p>", content_type="text/html")
+
