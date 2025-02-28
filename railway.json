@@ -6,16 +6,17 @@
       "phases": {
         "setup": {
           "pkgs": [
-            "python311", 
+            "python311Full",
             "python311Packages.pip",
             "postgresql_16",
             "gcc",
-            "libffi",
-            "zlib"
+            "zlib",
+            "libffi"
           ],
           "commands": [
             "python -m ensurepip --upgrade",
-            "python -m pip install --upgrade pip setuptools wheel"
+            "python -m pip install --upgrade pip setuptools wheel",
+            "export PATH=$PATH:~/.nix-profile/bin"  # Critical fix
           ]
         },
         "build": {
