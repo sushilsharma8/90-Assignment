@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
-from django.utils.timezone import now, make_aware
-from django.http import JsonResponse
+from django.utils.timezone import make_aware
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from datetime import datetime, timedelta
 import os
 import requests
+import base64
+import json
 from io import BytesIO
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
@@ -16,8 +18,8 @@ from googleapiclient.errors import HttpError
 from core.models import UserToken
 from Backend.logger import log
 from logging import INFO, ERROR
-from django.http import HttpResponse
 import art
+
 # OAuth Configuration
 GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
@@ -29,6 +31,16 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive.readonly"
 ]
+
+# Decode client_secret.json from Base64 if using environment variable
+base64_secret = os.getenv("GOOGLE_CLIENT_SECRET_JSON")
+if base64_secret:
+    try:
+        decoded_secret = base64.b64decode(base64_secret).decode("utf-8")
+        with open(os.path.join(settings.BASE_DIR, "client_secret.json"), "w") as f:
+            f.write(decoded_secret)
+    except Exception as e:
+        log(level=ERROR, function="decode_client_secret", message=f"Failed to decode client_secret.json: {str(e)}")
 
 # Helper Functions
 def get_user_tokens(user_email):
@@ -90,13 +102,11 @@ def google_callback(request):
             headers={"Authorization": f"Bearer {credentials.token}"}
         ).json()
 
-        # Create/update user
         user, _ = User.objects.get_or_create(
             username=user_info["email"],
             defaults={"email": user_info["email"]}
         )
 
-        # Store tokens
         UserToken.objects.update_or_create(
             user=user,
             defaults={
@@ -113,7 +123,6 @@ def google_callback(request):
             "expires_in": credentials.expiry.timestamp(),
             "user": user_info
         })
-
     except Exception as e:
         log(level=ERROR, function="google_callback", message=str(e))
         return JsonResponse({"error": str(e)}, status=500)
@@ -203,7 +212,6 @@ def list_drive_files(request):
 
 def health_check(request):
     return JsonResponse({"status": "ok"})
-
 
 def cool_terminal(request):
     ascii_banner = art.text2art("Welcome Here!", font="block")
