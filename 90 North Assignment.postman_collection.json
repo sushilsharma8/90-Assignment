@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "75a6124a-571e-463c-b7e9-091458c2b951",
+		"name": "90 North Assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37069919"
+	},
+	"item": [
+		{
+			"name": "Auth Google",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Drive Upload",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "List Drive Files",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "https://oauth2.googleapis.com/token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "227986049013-dm58sdpip5s4d0nmfo307tpp3qlv16rd.apps.googleusercontent.com",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "YOUR_GOOGLE_CLIENT_SECRET",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//0gI3c61lKfua3CgYIARAAGBASNwF-L9Irz2nh_DWO_QlPINMSLDh_M2X8B6vCOltHnHf8_9nQJ3oXgCIlcPtwnfBooOAY7DuEhDE",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://oauth2.googleapis.com/token",
+					"protocol": "https",
+					"host": [
+						"oauth2",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"token"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"https://oauth2.googleapis.com/token\" \\\r\n     -H \"Content-Type: application/x-www-form-urlencoded\" \\\r\n     -d \"client_id=227986049013-dm58sdpip5s4d0nmfo307tpp3qlv16rd.apps.googleusercontent.com\" \\\r\n     -d \"client_secret=YOUR_GOOGLE_CLIENT_SECRET\" \\\r\n     -d \"refresh_token=1//0gI3c61lKfua3CgYIARAAGBASNwF-L9Irz2nh_DWO_QlPINMSLDh_M2X8B6vCOltHnHf8_9nQJ3oXgCIlcPtwnfBooOAY7DuEhDE\" \\\r\n     -d \"grant_type=refresh_token\"\r\n"
+			},
+			"response": []
+		}
+	]
+}
