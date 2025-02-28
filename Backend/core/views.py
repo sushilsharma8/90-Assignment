@@ -199,3 +199,6 @@ def list_drive_files(request):
     except Exception as e:
         log(level=ERROR, function="list_drive_files", message=str(e))
         return JsonResponse({"error": str(e)}, status=500)
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})

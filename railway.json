@@ -6,14 +6,16 @@
       "phases": {
         "setup": {
           "pkgs": [
-            "python311",
-            "python311Packages.pip", 
+            "python311", 
+            "python311Packages.pip",
             "postgresql_16",
-            "gcc"
+            "gcc",
+            "libffi",
+            "zlib"
           ],
           "commands": [
             "python -m ensurepip --upgrade",
-            "python -m pip install --upgrade setuptools"
+            "python -m pip install --upgrade pip setuptools wheel"
           ]
         },
         "build": {
@@ -28,20 +30,7 @@
   "deploy": {
     "preDeployCommand": "python manage.py migrate",
     "startCommand": "daphne -b 0.0.0.0 -p $PORT Backend.asgi:application",
-    "healthcheckPath": "/",
-    "healthcheckTimeout": 30,
-    "restartPolicyType": "always"
-  },
-  "services": [
-    {
-      "name": "web",
-      "env": {
-        "DJANGO_SECRET_KEY": "DJANGO_SECRET_KEY",
-        "DEBUG": "False",
-        "GOOGLE_CLIENT_ID": "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET": "GOOGLE_CLIENT_SECRET",
-        "DATABASE_URL": "DATABASE_URL"
-      }
-    }
-  ]
+    "healthcheckPath": "/health/",
+    "healthcheckTimeout": 60
+  }
 }
