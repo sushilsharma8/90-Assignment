@@ -20,10 +20,14 @@ from Backend.logger import log
 from logging import INFO, ERROR
 import art
 
+
 # OAuth Configuration
 GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
-REDIRECT_URI = "http://127.0.0.1:8000/api/auth/callback/"
+if settings.DEBUG:
+    REDIRECT_URI = "http://127.0.0.1:8000/api/auth/callback/"
+else:
+    REDIRECT_URI = "https://nine0-assignment.onrender.com/api/auth/callback/"
 SCOPES = [
     "openid",
     "https://www.googleapis.com/auth/userinfo.email",
