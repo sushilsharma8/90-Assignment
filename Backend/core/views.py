@@ -16,7 +16,8 @@ from googleapiclient.errors import HttpError
 from core.models import UserToken
 from Backend.logger import log
 from logging import INFO, ERROR
-
+from django.http import HttpResponse
+import art
 # OAuth Configuration
 GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
 GOOGLE_CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
@@ -202,3 +203,8 @@ def list_drive_files(request):
 
 def health_check(request):
     return JsonResponse({"status": "ok"})
+
+
+def cool_terminal(request):
+    ascii_banner = art.text2art("Welcome Here!", font="block")
+    return HttpResponse(f"<pre>{ascii_banner}</pre>", content_type="text/html")

@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from core.views import cool_terminal
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('core.urls')),  # Include core app API routes
+    path("", cool_terminal),
 ]
