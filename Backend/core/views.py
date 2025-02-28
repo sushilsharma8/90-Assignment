@@ -1,4 +1,3 @@
-from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now, make_aware
 from django.http import JsonResponse
@@ -15,7 +14,8 @@ from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from googleapiclient.errors import HttpError
 from core.models import UserToken
-
+from Backend.logger import log
+from logging import INFO, ERROR
 
 # OAuth Configuration
 GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
@@ -26,7 +26,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
     "https://www.googleapis.com/auth/userinfo.profile",
     "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive.readonly"  # Added for list access
+    "https://www.googleapis.com/auth/drive.readonly"
 ]
 
 # Helper Functions
@@ -52,6 +52,7 @@ def build_credentials(token_data):
 def google_auth(request):
     """Initiate Google OAuth flow"""
     try:
+        log(level=INFO, function="google_auth", message="OAuth flow initiated.")
         flow = Flow.from_client_secrets_file(
             os.path.join(settings.BASE_DIR, "client_secret.json"),
             scopes=SCOPES,
@@ -64,6 +65,7 @@ def google_auth(request):
         )
         return JsonResponse({"auth_url": auth_url})
     except Exception as e:
+        log(level=ERROR, function="google_auth", message=str(e))
         return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
@@ -103,6 +105,7 @@ def google_callback(request):
             }
         )
 
+        log(level=INFO, function="google_callback", message=f"User authenticated: {user.email}")
         return JsonResponse({
             "access_token": credentials.token,
             "refresh_token": credentials.refresh_token,
@@ -111,6 +114,7 @@ def google_callback(request):
         })
 
     except Exception as e:
+        log(level=ERROR, function="google_callback", message=str(e))
         return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
@@ -133,6 +137,7 @@ def upload_to_drive(request):
             token_data.access_token = credentials.token
             token_data.expires_at = make_aware(credentials.expiry)
             token_data.save()
+            log(level=INFO, function="upload_to_drive", message="Access token refreshed.")
 
         drive_service = build("drive", "v3", credentials=credentials)
         
@@ -149,11 +154,14 @@ def upload_to_drive(request):
             fields="id"
         ).execute()
 
+        log(level=INFO, function="upload_to_drive", message=f"File uploaded successfully: {uploaded_file['id']}")
         return JsonResponse({"file_id": uploaded_file["id"]})
 
     except HttpError as e:
+        log(level=ERROR, function="upload_to_drive", message=str(e))
         return JsonResponse({"error": f"Google API Error: {str(e)}"}, status=500)
     except Exception as e:
+        log(level=ERROR, function="upload_to_drive", message=str(e))
         return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
@@ -173,51 +181,21 @@ def list_drive_files(request):
             token_data.access_token = credentials.token
             token_data.expires_at = make_aware(credentials.expiry)
             token_data.save()
+            log(level=INFO, function="list_drive_files", message="Access token refreshed.")
 
         drive_service = build("drive", "v3", credentials=credentials)
 
-        # Get files with pagination
-        files = []
-        page_token = None
-        while True:
-            response = drive_service.files().list(
-                pageSize=100,
-                fields="nextPageToken, files(id, name, mimeType, createdTime)",
-                pageToken=page_token
-            ).execute()
+        response = drive_service.files().list(
+            pageSize=100,
+            fields="files(id, name, mimeType, createdTime)"
+        ).execute()
             
-            files.extend(response.get("files", []))
-            page_token = response.get("nextPageToken")
-            if not page_token:
-                break
-
-        return JsonResponse({"files": files})
+        log(level=INFO, function="list_drive_files", message=f"Retrieved {len(response.get('files', []))} files.")
+        return JsonResponse({"files": response.get("files", [])})
 
     except HttpError as e:
+        log(level=ERROR, function="list_drive_files", message=str(e))
         return JsonResponse({"error": f"Google API Error: {e._get_reason()}"}, status=e.status_code)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-@csrf_exempt
-def refresh_access_token(request):
-    """Refresh access token endpoint"""
-    try:
-        user_email = request.headers.get("User-Email")
-        token_data = get_user_tokens(user_email)
-        if not token_data:
-            return JsonResponse({"error": "Unauthorized"}, status=401)
-
-        credentials = build_credentials(token_data)
-        credentials.refresh(Request())
-        
-        token_data.access_token = credentials.token
-        token_data.expires_at = make_aware(credentials.expiry)
-        token_data.save()
-
-        return JsonResponse({
-            "access_token": credentials.token,
-            "expires_at": credentials.expiry.isoformat()
-        })
-        
-    except Exception as e:
+        log(level=ERROR, function="list_drive_files", message=str(e))
         return JsonResponse({"error": str(e)}, status=500)
